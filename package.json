@@ -1,6 +1,6 @@
 {
   "name": "nansen-x402-wrapper",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "type": "module",
   "description": "Nansen API wrapped in x402 v2 pay-per-call (exact USDC on Base). Deployable to Railway.",
   "scripts": {

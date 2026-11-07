@@ -209,7 +209,6 @@ app.get("/.well-known/x402", (c) => {
             scheme: "exact",
             network: "eip155:8453",
             maxAmountRequired: PRICE_ATOMIC,
-            amount: PRICE_ATOMIC,
             asset: USDC_BASE,
             payTo: PAY_TO,
             maxTimeoutSeconds: 120,
@@ -225,7 +224,7 @@ app.get("/health", (c) =>
   c.json({
     ok: true,
     service: "nansen-x402-wrapper",
-    version: "2.1.0",
+    version: "2.2.0",
     endpoints: ENDPOINTS.map((ep) => ep.path),
     priceAtomicUsdc: PRICE_ATOMIC,
     priceUsdc: priceUsdc(),
@@ -251,7 +250,10 @@ app.get("/openapi.json", (c) => {
     const offer = makeOffer(c, ep);
     paths[ep.path] = {
       post: {
-        "x-payment-info": offer.accepts[0],
+        "x-payment-info": {
+          x402Version: 2,
+          accepts: offer.accepts,
+        },
         summary: ep.name,
         description: ep.description,
         requestBody: {
@@ -265,14 +267,42 @@ app.get("/openapi.json", (c) => {
         responses: {
           200: { description: `${ep.name} data` },
           400: { description: "Missing required fields (checked before payment)" },
-          402: { description: "Payment required" },
+          402: {
+            description: "Payment required",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    x402Version: { type: "integer", example: 2 },
+                    error: { type: "string", example: "Payment required" },
+                    accepts: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          scheme: { type: "string", example: "exact" },
+                          network: { type: "string", example: "eip155:8453" },
+                          amount: { type: "string", example: PRICE_ATOMIC },
+                          asset: { type: "string", example: USDC_BASE },
+                          payTo: { type: "string", example: PAY_TO },
+                          maxTimeoutSeconds: { type: "integer", example: 120 },
+                        },
+                      },
+                    },
+                  },
+                },
+                example: offer,
+              },
+            },
+          },
         },
       },
     };
   }
   return c.json({
     openapi: "3.0.3",
-    info: { title: "Nansen API (x402 wrapped)", version: "2.1.0" },
+    info: { title: "Nansen API (x402 wrapped)", version: "2.2.0" },
     servers: [{ url: publicOrigin(c) }],
     paths,
   });
