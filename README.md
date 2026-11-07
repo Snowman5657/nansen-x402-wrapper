@@ -13,9 +13,6 @@ body to `api.nansen.ai` with your Nansen API key and returns Nansen's JSON.
 | Route | Nansen upstream | Required body fields | Example body |
 |---|---|---|---|
 | `/token-screener` | `/api/v1/token-screener` | `chains` | `{"chains":["base"],"timeframe":"24h"}` |
-| `/smart-money/netflow` | `/api/v1/smart-money/netflow` | `chains` | `{"chains":["base"]}` |
-| `/smart-money/dex-trades` | `/api/v1/smart-money/dex-trades` | `chains` | `{"chains":["base"]}` |
-| `/smart-money/holdings` | `/api/v1/smart-money/holdings` | `chains` | `{"chains":["base"]}` |
 | `/tgm/flow-intelligence` | `/api/v1/tgm/flow-intelligence` | `chain`, `token_address` | `{"chain":"base","token_address":"0x8335…2913","timeframe":"24h"}` |
 | `/tgm/holders` | `/api/v1/tgm/holders` | `chain`, `token_address` | `{"chain":"base","token_address":"0x8335…2913"}` |
 | `/tgm/dex-trades` | `/api/v1/tgm/dex-trades` | `chain`, `token_address`, `date` | `{"chain":"base","token_address":"0x8335…2913","date":{"from":"2026-11-01T00:00:00Z","to":"2026-11-07T23:59:59Z"}}` |
@@ -23,7 +20,7 @@ body to `api.nansen.ai` with your Nansen API key and returns Nansen's JSON.
 | `/profiler/address/current-balance` | `/api/v1/profiler/address/current-balance` | `chain` | `{"chain":"base","address":"0x…"}` |
 
 Meta routes (free): `GET /` (endpoint list), `GET /health`, `GET /openapi.json`,
-`GET /.well-known/x402` (all 9 resources, x402 v1 discovery).
+`GET /.well-known/x402` (all 6 resources, x402 v1 discovery).
 
 **Validation:** required fields are checked *before* payment — a body missing
 them returns HTTP 400 and is never charged.
@@ -67,8 +64,6 @@ railway domain   # get the public https URL
 
 Nansen's docs state that **Smart Money endpoints are prohibited from
 redistribution** ("prohibited endpoints (eg. smart money endpoints) that are
-not open for redistribution"). Reselling the `/smart-money/*` routes through
-a public paid API risks your Nansen API key being revoked. The token
+not open for redistribution"). The `/smart-money/*` routes were therefore
+removed in v2.1.0 and are not served by this wrapper. The remaining token
 screener / TGM / profiler routes do not carry that same explicit prohibition.
-If you list this publicly, consider disabling the Smart Money routes or
-confirming the terms on your Nansen plan first.

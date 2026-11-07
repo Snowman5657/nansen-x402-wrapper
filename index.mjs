@@ -45,35 +45,6 @@ const ENDPOINTS = [
     exampleBody: { chains: ["base"], timeframe: "24h" },
   },
   {
-    path: "/smart-money/netflow",
-    nansen: "/api/v1/smart-money/netflow",
-    name: "Smart Money Netflow",
-    description:
-      "Smart Money net capital flows — where smart traders and funds moved net (1h / 24h / 7d / 30d).",
-    tags: ["nansen", "smart-money", "netflow"],
-    required: ["chains"],
-    exampleBody: { chains: ["base"] },
-  },
-  {
-    path: "/smart-money/dex-trades",
-    nansen: "/api/v1/smart-money/dex-trades",
-    name: "Smart Money DEX Trades",
-    description:
-      "Real-time DEX trading activity from smart traders and funds.",
-    tags: ["nansen", "smart-money", "dex-trades"],
-    required: ["chains"],
-    exampleBody: { chains: ["base"] },
-  },
-  {
-    path: "/smart-money/holdings",
-    nansen: "/api/v1/smart-money/holdings",
-    name: "Smart Money Holdings",
-    description: "What smart money wallets currently hold, by chain.",
-    tags: ["nansen", "smart-money", "holdings"],
-    required: ["chains"],
-    exampleBody: { chains: ["base"] },
-  },
-  {
     path: "/tgm/flow-intelligence",
     nansen: "/api/v1/tgm/flow-intelligence",
     name: "TGM Flow Intelligence",
@@ -254,7 +225,7 @@ app.get("/health", (c) =>
   c.json({
     ok: true,
     service: "nansen-x402-wrapper",
-    version: "2.0.0",
+    version: "2.1.0",
     endpoints: ENDPOINTS.map((ep) => ep.path),
     priceAtomicUsdc: PRICE_ATOMIC,
     priceUsdc: priceUsdc(),
@@ -301,7 +272,7 @@ app.get("/openapi.json", (c) => {
   }
   return c.json({
     openapi: "3.0.3",
-    info: { title: "Nansen API (x402 wrapped)", version: "2.0.0" },
+    info: { title: "Nansen API (x402 wrapped)", version: "2.1.0" },
     servers: [{ url: publicOrigin(c) }],
     paths,
   });
