@@ -532,7 +532,7 @@ function publicOrigin(c) {
 }
 
 function priceUsdc() {
-  return (Number(PRICE_ATOMIC) / 1e6).toFixed(4);
+  return (Number(PRICE_ATOMIC) / 1e6).toFixed(4).replace(/\.?0+$/, "") || "0";
 }
 
 function acceptsFor() {
@@ -611,26 +611,11 @@ app.use(
 // ---------------------------------------------------------------------------
 app.get("/.well-known/x402", (c) => {
   return c.json({
-    x402Version: 1,
-    resources: ENDPOINTS.map((ep) => {
-      const offer = makeOffer(c, ep);
-      return {
-        url: publicOrigin(c) + ep.path,
-        description: offer.resource.description,
-        mimeType: "application/json",
-        accepts: [
-          {
-            scheme: "exact",
-            network: "eip155:8453",
-            maxAmountRequired: PRICE_ATOMIC,
-            asset: USDC_BASE,
-            payTo: PAY_TO,
-            maxTimeoutSeconds: 120,
-            extra: { name: "USD Coin", version: "2" },
-          },
-        ],
-      };
-    }),
+    version: 1,
+    description: `Nansen API (x402 wrapped) — pay-per-call via x402, $${priceUsdc()} per request, USDC on Base. No API key required.`,
+    instructions: `All endpoints cost $${priceUsdc()} per request. Send a POST request with a JSON body. Pay $${priceUsdc()} USDC on Base (eip155:8453) via the x402 exact scheme; the payTo wallet is ${PAY_TO}.`,
+    paymentProtocols: ["x402"],
+    resources: ENDPOINTS.map((ep) => `POST ${ep.path}`),
   });
 });
 
@@ -638,7 +623,7 @@ app.get("/health", (c) =>
   c.json({
     ok: true,
     service: "nansen-x402-wrapper",
-    version: "2.3.0",
+    version: "2.4.0",
     endpoints: ENDPOINTS.map((ep) => ep.path),
     priceAtomicUsdc: PRICE_ATOMIC,
     priceUsdc: priceUsdc(),
@@ -665,8 +650,9 @@ app.get("/openapi.json", (c) => {
     paths[ep.path] = {
       post: {
         "x-payment-info": {
-          x402Version: 2,
-          accepts: offer.accepts,
+          protocols: ["x402"],
+          pricingMode: "fixed",
+          price: `$${priceUsdc()}`,
         },
         summary: ep.name,
         description: ep.description,
@@ -682,7 +668,7 @@ app.get("/openapi.json", (c) => {
           200: { description: `${ep.name} data` },
           400: { description: "Missing required fields (checked before payment)" },
           402: {
-            description: "Payment required",
+            description: "Payment Required",
             content: {
               "application/json": {
                 schema: {
@@ -715,8 +701,8 @@ app.get("/openapi.json", (c) => {
     };
   }
   return c.json({
-    openapi: "3.0.3",
-    info: { title: "Nansen API (x402 wrapped)", version: "2.3.0" },
+    openapi: "3.1.0",
+    info: { title: "Nansen API (x402 wrapped)", version: "2.4.0" },
     servers: [{ url: publicOrigin(c) }],
     paths,
   });
@@ -828,6 +814,11 @@ async function handlePaid(c, ep) {
 for (const ep of ENDPOINTS) {
   app.post(ep.path, (c) => handlePaid(c, ep));
 }
+
+// POST / is an alias for the token screener (the default paid endpoint),
+// so the API origin itself answers 402 instead of 404.
+const tokenScreener = ENDPOINTS.find((ep) => ep.path === "/token-screener");
+app.post("/", (c) => handlePaid(c, tokenScreener));
 
 serve({ fetch: app.fetch, port: PORT });
 console.log(`nansen-x402-wrapper v2 listening on ${PORT}`);
