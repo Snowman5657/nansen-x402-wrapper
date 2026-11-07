@@ -18,9 +18,55 @@ body to `api.nansen.ai` with your Nansen API key and returns Nansen's JSON.
 | `/tgm/dex-trades` | `/api/v1/tgm/dex-trades` | `chain`, `token_address`, `date` | `{"chain":"base","token_address":"0x8335…2913","date":{"from":"2026-11-01T00:00:00Z","to":"2026-11-07T23:59:59Z"}}` |
 | `/tgm/flows` | `/api/v1/tgm/flows` | `chain`, `token_address`, `date` | same date shape as above |
 | `/profiler/address/current-balance` | `/api/v1/profiler/address/current-balance` | `chain` | `{"chain":"base","address":"0x…"}` |
+| `/tgm/historical-dex-trades` | `/api/v1/tgm/historical-dex-trades` | `chain`, `token_address`, `date_range` | `{"chain":"base","token_address":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913","date_range":{"from":"2026-11-…` |
+| `/tgm/historical-pnl-leaderboard` | `/api/v1/tgm/historical-pnl-leaderboard` | `chain`, `token_address`, `date_range` | `{"chain":"base","token_address":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913","date_range":{"from":"2026-11-…` |
+| `/tgm/historical-token-flow-summary` | `/api/v1/tgm/historical-token-flow-summary` | `chain`, `token_address`, `date_range` | `{"chain":"base","token_address":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913","date_range":{"from":"2026-11-…` |
+| `/tgm/historical-token-quant-scores` | `/api/v1/tgm/historical-token-quant-scores` | `as_of_date`, `chain`, `token_address` | `{"as_of_date":"2026-11-07","chain":"base","token_address":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"}` |
+| `/tgm/historical-top-holders` | `/api/v1/tgm/historical-top-holders` | `chain`, `token_address`, `as_of_date` | `{"chain":"base","token_address":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913","as_of_date":"2026-11-07"}` |
+| `/tgm/historical-who-bought-sold` | `/api/v1/tgm/historical-who-bought-sold` | `chain`, `token_address`, `date_range` | `{"chain":"base","token_address":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913","date_range":{"from":"2026-11-…` |
+| `/tgm/indicators` | `/api/v1/tgm/indicators` | `chain`, `token_address` | `{"chain":"base","token_address":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"}` |
+| `/tgm/jup-dca` | `/api/v1/tgm/jup-dca` | `token_address` | `{"token_address":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"}` |
+| `/tgm/perp-pnl-leaderboard` | `/api/v1/tgm/perp-pnl-leaderboard` | `token_symbol`, `date` | `{"token_symbol":"ETH","date":{"from":"2026-11-01T00:00:00Z","to":"2026-11-07T23:59:59Z"}}` |
+| `/tgm/perp-positions` | `/api/v1/tgm/perp-positions` | `token_symbol` | `{"token_symbol":"ETH"}` |
+| `/tgm/perp-trades` | `/api/v1/tgm/perp-trades` | `token_symbol`, `date` | `{"token_symbol":"ETH","date":{"from":"2026-11-01T00:00:00Z","to":"2026-11-07T23:59:59Z"}}` |
+| `/tgm/pnl-leaderboard` | `/api/v1/tgm/pnl-leaderboard` | `chain`, `token_address`, `date` | `{"chain":"base","token_address":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913","date":{"from":"2026-11-01T00:…` |
+| `/tgm/position-intelligence` | `/api/v1/tgm/position-intelligence` | `token_address` | `{"token_address":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"}` |
+| `/tgm/token-information` | `/api/v1/tgm/token-information` | `chain`, `token_address`, `timeframe` | `{"chain":"base","token_address":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913","timeframe":"1h"}` |
+| `/tgm/token-ohlcv` | `/api/v1/tgm/token-ohlcv` | `chain`, `timeframe` | `{"chain":"base","timeframe":"1h","token_address":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"}` |
+| `/tgm/transfers` | `/api/v1/tgm/transfers` | `chain`, `token_address`, `date` | `{"chain":"base","token_address":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913","date":{"from":"2026-11-01T00:…` |
+| `/tgm/who-bought-sold` | `/api/v1/tgm/who-bought-sold` | `chain`, `token_address`, `date` | `{"chain":"base","token_address":"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913","date":{"from":"2026-11-01T00:…` |
+| `/profiler/address/counterparties` | `/api/v1/profiler/address/counterparties` | `chain`, `date` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8","chain":"base","date":{"from":"2026-11-01T00:00:00Z…` |
+| `/profiler/address/counterparties/batch` | `/api/v1/profiler/address/counterparties/batch` | `wallet_addresses`, `chain`, `date` | `{"wallet_addresses":["0xC9c104446E3284361Ed2b1607a370E2201bC25B8"],"chain":"base","date":{"from":"2026-11-0…` |
+| `/profiler/address/first-funder` | `/api/v1/profiler/address/first-funder` | `address` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8"}` |
+| `/profiler/address/historical-balances` | `/api/v1/profiler/address/historical-balances` | `chain`, `date` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8","chain":"base","date":{"from":"2026-11-01T00:00:00Z…` |
+| `/profiler/address/historical-token-balances` | `/api/v1/profiler/address/historical-token-balances` | `address`, `as_of_date`, `chain` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8","as_of_date":"2026-11-07","chain":"base"}` |
+| `/profiler/address/historical-transactions` | `/api/v1/profiler/address/historical-transactions` | `address`, `chain`, `as_of_date` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8","chain":"base","as_of_date":"2026-11-07"}` |
+| `/profiler/address/labels` | `/api/v1/profiler/address/labels` | `address`, `chain` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8","chain":"base"}` |
+| `/profiler/address/pnl` | `/api/v1/profiler/address/pnl` | `chain` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8","chain":"base"}` |
+| `/profiler/address/pnl-summary` | `/api/v1/profiler/address/pnl-summary` | `chain`, `date` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8","chain":"base","date":{"from":"2026-11-01T00:00:00Z…` |
+| `/profiler/address/premium-labels` | `/api/v1/profiler/address/premium-labels` | `address`, `chain` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8","chain":"base"}` |
+| `/profiler/address/related-wallets` | `/api/v1/profiler/address/related-wallets` | `chain` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8","chain":"base"}` |
+| `/profiler/address/transactions` | `/api/v1/profiler/address/transactions` | `chain`, `date` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8","chain":"base","date":{"from":"2026-11-01T00:00:00Z…` |
+| `/profiler/dex-trades` | `/api/v1/profiler/dex-trades` | `address`, `chain`, `date` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8","chain":"base","date":{"from":"2026-11-01T00:00:00Z…` |
+| `/profiler/historical-transaction-lookup` | `/api/v1/profiler/historical-transaction-lookup` | `chain`, `transaction_hash`, `as_of_date` | `{"chain":"base","transaction_hash":"0xb2a8d372b9effb5d56c2dca4e3c422abcd68f13e4566e0fbc97a9613310bd450","as…` |
+| `/profiler/perp-pnl-summary` | `/api/v1/profiler/perp-pnl-summary` | `address`, `date` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8","date":{"from":"2026-11-01T00:00:00Z","to":"2026-11…` |
+| `/profiler/perp-positions` | `/api/v1/profiler/perp-positions` | `address` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8"}` |
+| `/profiler/perp-trades` | `/api/v1/profiler/perp-trades` | `address`, `date` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8","date":{"from":"2026-11-01T00:00:00Z","to":"2026-11…` |
+| `/prediction-market/address-summary` | `/api/v1/prediction-market/address-summary` | `address` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8"}` |
+| `/prediction-market/categories` | `/api/v1/prediction-market/categories` | — | `{}` |
+| `/prediction-market/event-screener` | `/api/v1/prediction-market/event-screener` | — | `{}` |
+| `/prediction-market/market-screener` | `/api/v1/prediction-market/market-screener` | — | `{}` |
+| `/prediction-market/ohlcv` | `/api/v1/prediction-market/ohlcv` | `market_id` | `{"market_id":"1"}` |
+| `/prediction-market/orderbook` | `/api/v1/prediction-market/orderbook` | `market_id` | `{"market_id":"1"}` |
+| `/prediction-market/pnl-by-address` | `/api/v1/prediction-market/pnl-by-address` | `address` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8"}` |
+| `/prediction-market/pnl-by-market` | `/api/v1/prediction-market/pnl-by-market` | `market_id` | `{"market_id":"1"}` |
+| `/prediction-market/position-detail` | `/api/v1/prediction-market/position-detail` | `market_id` | `{"market_id":"1"}` |
+| `/prediction-market/top-holders` | `/api/v1/prediction-market/top-holders` | `market_id` | `{"market_id":"1"}` |
+| `/prediction-market/trades-by-address` | `/api/v1/prediction-market/trades-by-address` | `address` | `{"address":"0xC9c104446E3284361Ed2b1607a370E2201bC25B8"}` |
+| `/prediction-market/trades-by-market` | `/api/v1/prediction-market/trades-by-market` | `market_id` | `{"market_id":"1"}` |
 
 Meta routes (free): `GET /` (endpoint list), `GET /health`, `GET /openapi.json`,
-`GET /.well-known/x402` (all 6 resources, x402 v1 discovery).
+`GET /.well-known/x402` (all 52 resources, x402 v1 discovery).
 
 **Validation:** required fields are checked *before* payment — a body missing
 them returns HTTP 400 and is never charged.
