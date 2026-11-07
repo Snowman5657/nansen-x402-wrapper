@@ -535,6 +535,37 @@ function priceUsdc() {
   return (Number(PRICE_ATOMIC) / 1e6).toFixed(4).replace(/\.?0+$/, "") || "0";
 }
 
+// Infer a JSON Schema property from an example value, so the OpenAPI
+// requestBody actually describes the inputs (required fields + types).
+// The vAPI console reads `required`/`properties` to populate its input form;
+// a bare `{ type: "object" }` made it send an empty body instead.
+function inferProp(value) {
+  if (Array.isArray(value)) {
+    return {
+      type: "array",
+      items: value.length ? inferProp(value[0]) : {},
+      example: value,
+    };
+  }
+  if (value && typeof value === "object") {
+    const props = {};
+    for (const [k, v] of Object.entries(value)) props[k] = inferProp(v);
+    return { type: "object", properties: props, example: value };
+  }
+  return { type: typeof value, example: value };
+}
+
+function requestBodySchema(ep) {
+  const props = {};
+  for (const [k, v] of Object.entries(ep.exampleBody)) props[k] = inferProp(v);
+  return {
+    type: "object",
+    required: ep.required,
+    properties: props,
+    additionalProperties: true,
+  };
+}
+
 function acceptsFor() {
   return {
     scheme: "exact",
@@ -623,7 +654,7 @@ app.get("/health", (c) =>
   c.json({
     ok: true,
     service: "nansen-x402-wrapper",
-    version: "2.4.0",
+    version: "2.5.0",
     endpoints: ENDPOINTS.map((ep) => ep.path),
     priceAtomicUsdc: PRICE_ATOMIC,
     priceUsdc: priceUsdc(),
@@ -657,16 +688,17 @@ app.get("/openapi.json", (c) => {
         summary: ep.name,
         description: ep.description,
         requestBody: {
+          required: true,
           content: {
             "application/json": {
-              schema: { type: "object" },
+              schema: requestBodySchema(ep),
               example: ep.exampleBody,
             },
           },
         },
         responses: {
           200: { description: `${ep.name} data` },
-          400: { description: "Missing required fields (checked before payment)" },
+          400: { description: "Missing required fields (checked after payment is presented, before settlement)" },
           402: {
             description: "Payment Required",
             content: {
@@ -702,18 +734,32 @@ app.get("/openapi.json", (c) => {
   }
   return c.json({
     openapi: "3.1.0",
-    info: { title: "Nansen API (x402 wrapped)", version: "2.4.0" },
+    info: { title: "Nansen API (x402 wrapped)", version: "2.5.0" },
     servers: [{ url: publicOrigin(c) }],
     paths,
   });
 });
 
 // ---------------------------------------------------------------------------
-// Paid proxy. One handler per endpoint; required fields are validated BEFORE
-// payment so a caller is never charged for a body that would 422 upstream.
+// Paid proxy. One handler per endpoint. The 402 quote comes FIRST for any
+// unpaid request (even an empty body): the vAPI console's unpaid price check
+// sends {} and needs a 402, not a 400. Required fields are validated only
+// once a payment is presented, and BEFORE verify/settle, so a caller is
+// never charged for a body that would 422 upstream (settlement happens
+// only in the settle step, after validation).
 // ---------------------------------------------------------------------------
 async function handlePaid(c, ep) {
-  // Parse + validate the body first (no charge for a bad body).
+  const offer = makeOffer(c, ep);
+  const encoded = c.req.header("PAYMENT-SIGNATURE");
+  if (!encoded) {
+    return c.json(offer, 402, {
+      // btoa() only handles Latin1; the offer contains UTF-8 (em-dashes),
+      // so encode via Buffer instead.
+      "PAYMENT-REQUIRED": Buffer.from(JSON.stringify(offer), "utf-8").toString("base64"),
+    });
+  }
+
+  // A payment was presented: parse + validate the body before verify/settle.
   let reqBody = {};
   try {
     reqBody = await c.req.json();
@@ -734,15 +780,6 @@ async function handlePaid(c, ep) {
     );
   }
 
-  const offer = makeOffer(c, ep);
-  const encoded = c.req.header("PAYMENT-SIGNATURE");
-  if (!encoded) {
-    return c.json(offer, 402, {
-      // btoa() only handles Latin1; the offer contains UTF-8 (em-dashes),
-      // so encode via Buffer instead.
-      "PAYMENT-REQUIRED": Buffer.from(JSON.stringify(offer), "utf-8").toString("base64"),
-    });
-  }
   let payment;
   try {
     payment = JSON.parse(Buffer.from(encoded, "base64").toString("utf-8"));
